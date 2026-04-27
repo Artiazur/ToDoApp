@@ -1,2 +1,2 @@
 # ToDoApp
-A simple to do list app for practicing fastapi
+A simple to do list app for practicing fastapi 😊
