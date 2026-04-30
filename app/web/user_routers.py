@@ -35,7 +35,7 @@ def get_me(
     db: Annotated[Session, Depends(database.get_db)],
     user_id: Annotated[int, Depends(get_current_user)],
 ):
-    return user_service.get_current_active_user(db, user_id)
+    return user_service.get_current_user_profile(db, user_id)
 
 
 @router.post("/refresh")
