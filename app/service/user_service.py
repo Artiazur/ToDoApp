@@ -67,21 +67,23 @@ def get_current_user_profile(
 
 
 def refresh_access_token(db: Session, token: str):
-    
+
     token_obj = token_repository.get_token(db, token)
-    
+
     if not token_obj:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     if helper_service.make_aware_datetime_object(token_obj.exp) < datetime.now(timezone.utc):
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     user_id = helper_service.check_refresh_token(token_obj, token_obj.user_id)
     access_token = security.create_access_token({"user_id": user_id})
     new_refresh_token, exp = security.create_refresh_token(
-        {"user_id": user_id}) 
+        {"user_id": user_id})
     token_repository.delete_token(db, token_obj)
     token_repository.add_refresh_token(db, user_id, new_refresh_token, exp)
-    
+
     return {"access_token": access_token,
             "refresh_token": new_refresh_token}
